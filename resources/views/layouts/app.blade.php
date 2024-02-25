@@ -75,6 +75,15 @@
         <main class="py-4">
             @yield('content')
         </main>
+
     </div>
+    <footer class="bg-light text-lg-start">
+    
+
+    <hr class="m-0" />
+
+
+
+  </footer>
 </body>
 </html>
