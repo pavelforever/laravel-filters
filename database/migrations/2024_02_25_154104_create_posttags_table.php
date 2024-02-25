@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->unsignedSmallInteger('role')->nullable();
+        Schema::create('post_tags', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->foreignId('post_id')->constrained('posts');
+            $table->foreignId('tag_id')->constrained('tags');
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('role');
-        });
+        Schema::dropIfExists('post_tags');
     }
 };

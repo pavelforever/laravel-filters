@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->unsignedSmallInteger('role')->nullable();
+        Schema::table('posts', function (Blueprint $table) {
+            $table->foreignId('category_id')->nullable()->constrained('categories');
+            $table->softDeletes();
         });
     }
 
@@ -21,8 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('role');
+        Schema::table('posts', function (Blueprint $table) {
+            $table->dropSoftDeletes();
         });
     }
 };

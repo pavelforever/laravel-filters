@@ -80,4 +80,14 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.index');
     }
+    public function deletes(){
+        $users = User::onlyTrashed()->get();
+        return view('admin.users.restore',compact('users'));
+    }
+    public function restore($id){
+        $user = User::onlyTrashed()->find($id);
+        $user->restore();
+        
+        return redirect()->route('admin.users.restore');
+    }
 }

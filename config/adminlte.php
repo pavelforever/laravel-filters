@@ -328,7 +328,12 @@ return [
                 [
                     'text' => 'Create User',
                     'url' => 'admin/users/create',
-                    'icon' => 'fa fa-plus mr-2'
+                    'icon' => 'fa text-primary fa-plus mr-2'
+                ],
+                [
+                    'text' => 'Deleted Users',
+                    'url' => 'admin/users/restore',
+                    'icon' => 'fa text-success fa-trash-restore mr-2'
                 ],
                 // You can add more submenu items for show, edit, delete, etc.
             ],
