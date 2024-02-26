@@ -302,6 +302,50 @@ return [
 
         
         [
+            'text' => 'Category',
+            'icon' => '',
+            'url' => 'admin/categories',
+            'submenu' => [
+                [
+                    'text' => 'All Categories',
+                    'icon' => 'fa fa-list mr-2',
+                    'url' => 'admin/categories',
+                ],
+                [
+                    'text' => 'Create Category',
+                    'url' => 'admin/categories/create',
+                    'icon' => 'fa text-primary fa-plus mr-2'
+                ],
+                [
+                    'text' => 'Deleted Categories',
+                    'url' => 'admin/categories/restore',
+                    'icon' => 'fa text-success fa-trash-restore mr-2'
+                ],
+            ]
+        ],
+        [
+            'text' => 'Tags',
+            'icon' => '',
+            'url' => 'admin/tags',
+            'submenu' => [
+                [
+                    'text' => 'All Tags',
+                    'icon' => 'fas fa-tag mr-2',
+                    'url' => 'admin/tags',
+                ],
+                [
+                    'text' => 'Create Tag',
+                    'url' => 'admin/tags/create',
+                    'icon' => 'fa text-primary fa-plus mr-2'
+                ],
+                [
+                    'text' => 'Deleted Tags',
+                    'url' => 'admin/tags/restore',
+                    'icon' => 'fa text-success fa-trash-restore mr-2'
+                ],
+            ]
+        ],
+        [
             'text' => 'Posts',
             'icon' => 'far fa-newspaper',
             'submenu' => [
@@ -311,7 +355,7 @@ return [
                 ],
                 [
                     'text' => 'Create Post',
-                    'url' => 'admin/posts/create',
+                    'url' => 'admin/post/create',
                 ],
                 // You can add more submenu items for show, edit, delete, etc.
             ],

@@ -12,9 +12,9 @@ class TagController extends Controller
      */
     public function index()
     {   
-        $tags = Tag::all();
+        $tags = Tag::withCount('posts')->get();
         
-        return view('admin.tags.index', compact('tags'));
+        return view('admin.tag.index', compact('tags'));
     }
 
     /**
@@ -32,7 +32,7 @@ class TagController extends Controller
     {
         $tag = $request->validated();
 
-        $request->user()->tag()->create($tag);
+        Tag::create($tag);
 
         return redirect()->route('admin.tags.index');
     }
@@ -48,9 +48,9 @@ class TagController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Tag $tags)
+    public function edit(Tag $tag)
     {
-        return view('admin.tag.edit',compact('tags'));
+        return view('admin.tag.edit',compact('tag'));
     }
 
     /**
@@ -73,4 +73,18 @@ class TagController extends Controller
 
         return redirect()->route('admin.tags.index');
     }
+
+    public function deletes(){
+        $tags = Tag::onlyTrashed()->get();
+
+        return view('admin.tag.restore', compact('tags'));
+    }
+    public function restore($id){
+        $tag = Tag::onlyTrashed()->find($id);
+
+        $tag->restore();
+        
+        return redirect()->route('admin.tags.restore');
+    }
+
 }

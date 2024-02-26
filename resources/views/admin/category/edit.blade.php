@@ -2,53 +2,42 @@
 @extends('adminlte::page')
 
 
-<div class="container">
-    @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-    @endif
-    
-    @section('content')
-
+@section('content')
+@if ($errors->any())
+<div class="alert alert-danger">
+    <ul>
+        @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
 <div class="login-dark">
-    <form method="POST" action="{{route('admin.users.store')}}">
+    <form method="POST" action="{{route('admin.categories.update',$category->id)}}">
         @csrf
-        @method('POST')
-        <h3 class="text-center">New User</h3>
+        @method('PATCH')
+        <h3 class="text-center">Editing {{$category->title }} Category</h3>
         <div class="form-group">
             <div class="illustration"><i class="icon ion-ios-locked-outline"></i></div>
-            <input type="text" class="form-control" placeholder="Name"  name="name"/>
+            <input type="text" class="form-control" value="{{old('title',$category->title)}}" name="title"/>
         </div>
-        <div class="form-group">
-            <input type="email" required autocomplete="email" placeholder="example@example.com" class="form-control"  name="email"/>
-        </div>
-        <div class="form-group">
-            <input type="password" required class="form-control" placeholder="12345678" name="password"/>
-        </div>
-        <select class="form-group" name="role">
-        
-            @foreach($roles as $id => $role)
-                <option class="form-control" value="{{$id}}" >{{$role}}</option>
-            @endforeach
-        </select>
-        <div class="form-group"><button class="btn btn-primary btn-block" type="submit">Create</button></div>
+        <button class="btn btn-primary btn-block" type="submit">Edit</button></div>
     </form>
-</div>
 </div>
 @stop
 
 <style>
 
     .login-dark form {
+        max-width:320px;
         width:90%;
         background-color:#1e2833;
         padding:40px;
         border-radius:4px;
+        transform:translate(-50%, -50%);
+        position:absolute;
+        top:50%;
+        left:50%;
         color:#fff;
         box-shadow:3px 3px 4px rgba(0,0,0,0.2);
     }

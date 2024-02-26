@@ -9,9 +9,9 @@ class CategoryController extends Controller
 {
     public function index()
     {   
-        $categories = Category::all();
+        $categories = Category::withCount('posts')->get();
         
-        return view('admin.categories.index', compact('categories'));
+        return view('admin.category.index', compact('categories'));
     }
     public function create()
     {
@@ -21,7 +21,7 @@ class CategoryController extends Controller
     {
         $category = $request->validated();
 
-        $request->user()->Category()->create($category);
+        Category::create($category);
 
         return redirect()->route('admin.categories.index');
     }
@@ -29,17 +29,19 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
-    {
+    public function show($id)
+    {   
+        $category = Category::with('posts')->find($id);
+
         return view('admin.category.show', compact('category'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Category $categories)
+    public function edit(Category $category)
     {
-        return view('admin.category.edit',compact('categories'));
+        return view('admin.category.edit',compact('category'));
     }
 
     /**
@@ -52,7 +54,6 @@ class CategoryController extends Controller
 
         return redirect()->route('admin.categories.index');
     }
-
     /**
      * Remove the specified resource from storage.
      */
@@ -61,5 +62,15 @@ class CategoryController extends Controller
         $category->delete();
 
         return redirect()->route('admin.categories.index');
+    }
+
+    public function deletes(){
+        $categories = Category::onlyTrashed()->get();
+        return view('admin.category.restore',compact('categories'));
+    }
+    public function restore($id){
+        $category = Category::onlyTrashed()->find($id);
+        $category->restore();
+        return redirect()->route('admin.categories.restore');
     }
 }
