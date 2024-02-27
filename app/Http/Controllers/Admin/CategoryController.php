@@ -20,7 +20,6 @@ class CategoryController extends Controller
     public function store(StoreCategoriesRequest $request)
     {
         $category = $request->validated();
-
         Category::create($category);
 
         return redirect()->route('admin.categories.index');

@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Tag;
+use App\Models\Category;
 use App\Models\Post;
-use App\Http\Requests\StorePostRequest;
-use App\Http\Requests\UpdatePostRequest;
+use App\Http\Requests\StoreCategoriesRequest;
+use App\Http\Requests\UpdatePostsRequest;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
 class PostController extends Controller
 {
@@ -14,28 +18,56 @@ class PostController extends Controller
      */
     public function index()
     {   
-        $posts = Post::all();
-        return view('admin.posts.index', compact('posts'));
+      $posts =  Post::all();
+      
+      return view('admin.post.index', compact('posts'));
     }
-
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $categories = Category::all();
-        $tags = Tag::all();
+     $category = Category::all();
+     $tags = Tag::all();
 
-        return view('admin.tag.create', compact('categories','tags'));
+     return view('admin.post.create', compact('category','tags'));
+
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePostRequest $request)
+    public function store(StoreCategoriesRequest $request)
     {
-        
-        return redirect()->route('admin.posts.index');
+        $tags = [];
+        try{
+            DB::beginTransaction();
+            $data = $request->validated();
+            dd(gettype($data));
+            if(array_key_exists('tag_ids',$data['tag_ids'])){
+                $tags = $data['tag_ids'];
+                unset($data['tag_ids']);
+            }
+
+            $data['image'] = Storage::disk('public')->put('images',$data['image']);
+            $previewImagePath = Storage::disk('public')->put('images', $data['preview_image']);
+            $imagePreview = Image::make(storage_path('app/public/'.$previewImagePath));
+            $imagePreview->fit(600,360);
+            $imagePreview->save();
+
+            $data['imagePreview'] = $previewImagePath;
+
+            $post = Post::create($data);
+
+            $post->tags->attach($tags);
+            
+            DB::commit();
+
+        } catch(\Exception $exception){
+            DB::rollBack();
+            dd($exception);
+            abort(500);
+        }
     }
 
     /**
@@ -43,7 +75,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return view('admin.post.show', compact('post'));
+       return view('admin.post.show',compact('post'));
     }
 
     /**
@@ -51,10 +83,10 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        $categories = Category::all();
-        $tags = Tag::all();
+       $category = Category::all();
+       $tags = Tag::all();
 
-        return view('admin.post.edit',compact('post'));
+       return view('admin.post.edit', compact('post','category','tags'));
     }
 
     /**
@@ -62,8 +94,46 @@ class PostController extends Controller
      */
     public function update(UpdatePostsRequest $request, Post $post)
     {
-       
-        return redirect()->route('admin.posts.index');
+        $tagIds = [];
+        try{
+            DB::beginTransaction();
+
+            $data = $request->validated();
+
+            if(array_key_exists('tag_ids',$data['tag_ids'])){
+                $tagIds = $data['tag_ids'];
+                unset($data['tag_ids']);
+                $post->tags()->sync($tagIds);
+            }else {
+                $post->tags()->detach();
+            }
+
+            if($request->hasFile('image')){
+                Storage::disk('public')->delete($post->image);
+                $data['image'] = Storage::disk('public')->put('images',$data['image']);
+            }
+            if($request->hasFile('previewImage')){
+                Storage::disk('public')->delete($post->imagePreview);
+                $previewImagePath = Storage::disk('public')->put('images',$data['previewImage']);
+
+                $previewImage = Image::make(storage_path('app/public'.$previewImagePath));
+                $previewImage->fit(600,360);
+
+                $previewImage->save();
+
+                $data['imagePreview'] = $previewImagePath;
+            }
+
+            $post->update($data);
+            
+            DB::commit();
+            
+        }catch(\Exception $ex){
+            DB::rollBack();
+            dd($ex);
+            abort(500);
+        }
+        
     }
 
     /**
@@ -71,8 +141,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        $post->delete();
+      $post->delete();
 
-        return redirect()->route('admin.posts.index');
+      return redirect()->route('admin.posts.index');
     }
 }

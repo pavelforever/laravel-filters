@@ -1,6 +1,8 @@
 
 @extends('adminlte::page')
 
+@section('content')
+
 
 <div class="container">
     @if ($errors->any())
@@ -13,7 +15,6 @@
     </div>
     @endif
     
-    @section('content')
 
 <div class="login-dark">
     <form method="POST" action="{{route('admin.users.store')}}">
