@@ -13,26 +13,29 @@
                         <small class="text-sm text-gray-600"> &middot; {{ __('edited') }}</small>
                     @endunless
                     </a></h4>
+                    @forelse ($tag->posts as $post )
+                    <div class="col-sm-12 col-md-6 col-lg-4 mb-4">
+                        <div class="card text-dark card-has-bg click-col" style="background-image:url('{{url('storage/'. $post->image)}}');">
+                            <img class="card-img d-none" src="{{$post->image}}" alt="{{$post->title}}">
+                            <div class="card-img-overlay d-flex flex-column">
+                                    <div class="card-body">
+                                        <small class="card-meta mb-2">{{$post->pivot->tags->title}}</small>
+                                        <small style="float:right;margin-bottom: 1em;"><i class="far fa-clock"></i>{{$post->created_at->format('D m, Y')}}</small>
+                                        <p class="card-title mt-0 " style="font-size: 13px;letter-spacing: "><a class="text-dark" href="{{route('admin.posts.show',$post->id)}}">
+                                        </a></p>
+                                        <p style="scroll-behavior: smooth;
+                                        overflow: scroll;
+                                        height: 100%;
+                                        width: 100%;">{{$post->message }}</p>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                                
+                    @endforelse
         </div>
    
-        @forelse ($tag->posts as $post )
-        <div class="col-sm-12 col-md-6 col-lg-4 mb-4">
-            <div class="card text-dark card-has-bg click-col" style="background-image:url('{{$post->image}}');">
-                <img class="card-img d-none" src="{{$post->image}}" alt="{{$post->title}}">
-                <div class="card-img-overlay d-flex flex-column">
-                        <div class="card-body">
-                            <small class="card-meta mb-2">{{$post->tag->title}}</small>
-                            <h4 class="card-title mt-0 "><a class="text-dark" herf="{{route('admin.posts.show',$post->id)}}">
-                                {{!! $post->message !!}}
-                            </a></h4>
-                            <small><i class="far fa-clock"></i>{{$post->created_at->format('D m, Y')}}</small>
-                        </div>
-                </div>
-            </div>
-        </div>
-        @empty
-                    
-        @endforelse
 </div>
 @stop
 

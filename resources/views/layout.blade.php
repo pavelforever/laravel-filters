@@ -31,7 +31,7 @@
                         <li class="nav-item active">
                             <a class="nav-link" aria-current="page" href="{{route('admin.dashboard')}}">Admin</a>
                         </li>
-                        @endif;
+                        @endif
                     </ul>
                     @endauth
                     <ul class="navbar-nav ms-auto">

@@ -14,7 +14,10 @@ class Tag extends Model
     protected $guarded = [];
 
     public function posts(){
-        return $this->belongsToMany(Post::class, 'post_tags');
+        return $this->belongsToMany(Post::class,'post_tags','tag_id','post_id')->using(PostTag::class)
+        ->wherePivot('deleted_at', null)
+        ->withPivot('id')
+        ->withTimestamps();
     }
 
     protected static function boot()

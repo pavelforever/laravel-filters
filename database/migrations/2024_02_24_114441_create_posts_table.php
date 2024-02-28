@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('image');
             $table->string('imagePreview');
             $table->string('title');
-            $table->string('message');
+            $table->text('message');
             $table->timestamps();
         });
     }
@@ -26,9 +26,13 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->dropColumn('main_image');
-            $table->dropColumn('preview_image');
+        // Schema::table('posts', function (Blueprint $table) {
+        //     $table->dropColumn('imagePreview');
+        // });
+        Schema::table('post_tags', function (Blueprint $table) {
+            $table->dropForeign(['post_id']);
         });
+    
+        Schema::dropIfExists('posts');
     }
 };

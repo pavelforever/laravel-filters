@@ -16,19 +16,22 @@ class Category extends Model
     {
         return $this->hasMany(Post::class);
     }
-
-    protected static function boot()
+    public function countPosts()
     {
-        parent::boot();
-
-        static::deleting(function ($category) {
-            // Detach posts when category is deleted
-            $category->posts()->update(['category_id' => null]);
-        });
-
-        static::restoring(function ($category) {
-            // Restore posts when category is restored
-            $category->posts()->withTrashed()->update(['category_id' => $category->id]);
-        });
+        return $this->posts()->count();
     }
+    // protected static function boot()
+    // {
+    //     parent::boot();
+
+    //     static::deleting(function ($category) {
+    //         // Detach posts when category is deleted
+    //         $category->posts()->update(['category_id' => null]);
+    //     });
+
+    //     static::restoring(function ($category) {
+    //         // Restore posts when category is restored
+    //         $category->posts()->withTrashed()->update(['category_id' => $category->id]);
+    //     });
+    // }
 }

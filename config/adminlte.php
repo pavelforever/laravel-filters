@@ -355,9 +355,13 @@ return [
                 ],
                 [
                     'text' => 'Create Post',
-                    'url' => 'admin/post/create',
+                    'url' => 'admin/posts/create',
                 ],
-                // You can add more submenu items for show, edit, delete, etc.
+                [
+                    'text' => 'Deleted Posts',
+                    'url' => 'admin/posts/restore',
+                    'icon' => 'fa text-success fa-trash-restore mr-2'
+                ],
             ],
         ],
         [

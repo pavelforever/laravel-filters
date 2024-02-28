@@ -24,6 +24,8 @@ Route::group(['prefix' => 'admin','as' => 'admin.','middleware' => ['auth','admi
     Route::post('/categories/{id}/restore', [CategoryController::class,'restore'])->name('categories.restore.restore');
     Route::resource('/categories', CategoryController::class);
 
+    Route::get('/posts/restore', [PostController::class,'deletes'])->name('posts.restore');
+    Route::post('/posts/{id}/restore', [PostController::class,'restore'])->name('posts.restore.restore');
     Route::resource('/posts', PostController::class);
 });
 Auth::routes();

@@ -5,17 +5,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Tag;
 use App\Models\Category;
 use App\Models\Post;
-use App\Http\Requests\StoreCategoriesRequest;
+use App\Http\Requests\StorePostsRequest;
 use App\Http\Requests\UpdatePostsRequest;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use App\Services\PostService;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $postService;
+
+    public function __construct(PostService $postService)
+    {
+        $this->postService = $postService;
+    }
+
     public function index()
     {   
       $posts =  Post::all();
@@ -37,34 +39,15 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCategoriesRequest $request)
+    public function store(StorePostsRequest $request)
     {
-        $tags = [];
+        $data = $request->validated();
         try{
-            DB::beginTransaction();
-            $data = $request->validated();
-            dd(gettype($data));
-            if(array_key_exists('tag_ids',$data['tag_ids'])){
-                $tags = $data['tag_ids'];
-                unset($data['tag_ids']);
-            }
 
-            $data['image'] = Storage::disk('public')->put('images',$data['image']);
-            $previewImagePath = Storage::disk('public')->put('images', $data['preview_image']);
-            $imagePreview = Image::make(storage_path('app/public/'.$previewImagePath));
-            $imagePreview->fit(600,360);
-            $imagePreview->save();
+            $post = $this->postService->createPost($data);
 
-            $data['imagePreview'] = $previewImagePath;
-
-            $post = Post::create($data);
-
-            $post->tags->attach($tags);
-            
-            DB::commit();
-
+            return redirect()->route('admin.posts.index');
         } catch(\Exception $exception){
-            DB::rollBack();
             dd($exception);
             abort(500);
         }
@@ -94,55 +77,33 @@ class PostController extends Controller
      */
     public function update(UpdatePostsRequest $request, Post $post)
     {
-        $tagIds = [];
-        try{
-            DB::beginTransaction();
+        $data =  $request->validated();
 
-            $data = $request->validated();
+        try {
+            $post = $this->postService->updatePost($post,$data);
 
-            if(array_key_exists('tag_ids',$data['tag_ids'])){
-                $tagIds = $data['tag_ids'];
-                unset($data['tag_ids']);
-                $post->tags()->sync($tagIds);
-            }else {
-                $post->tags()->detach();
-            }
-
-            if($request->hasFile('image')){
-                Storage::disk('public')->delete($post->image);
-                $data['image'] = Storage::disk('public')->put('images',$data['image']);
-            }
-            if($request->hasFile('previewImage')){
-                Storage::disk('public')->delete($post->imagePreview);
-                $previewImagePath = Storage::disk('public')->put('images',$data['previewImage']);
-
-                $previewImage = Image::make(storage_path('app/public'.$previewImagePath));
-                $previewImage->fit(600,360);
-
-                $previewImage->save();
-
-                $data['imagePreview'] = $previewImagePath;
-            }
-
-            $post->update($data);
-            
-            DB::commit();
-            
+            redirect()->route('admin.posts.index');
         }catch(\Exception $ex){
-            DB::rollBack();
             dd($ex);
             abort(500);
         }
         
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Post $post)
     {
       $post->delete();
 
       return redirect()->route('admin.posts.index');
+    }
+    public function deletes(){
+        $posts = Post::onlyTrashed()->get();
+        return view('admin.post.restore', compact('posts'));
+    }
+    public function restore($id){
+        $post = Post::onlyTrashed()->find($id);
+
+        $post->restore();
+        
+        return redirect()->route('admin.posts.restore');
     }
 }
