@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('imagePreview');
             $table->string('title');
             $table->text('message');
+            $table->foreignId('category_id')->nullable()->constrained('categories');
             $table->timestamps();
         });
     }
@@ -26,10 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('post_tags', function (Blueprint $table) {
-            $table->dropForeign(['post_id']);
-        });
-    
         Schema::dropIfExists('posts');
     }
 };

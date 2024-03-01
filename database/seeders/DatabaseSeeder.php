@@ -15,11 +15,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('tags')->insert([
-            'title' => Str::random(10),
-        ]);
-        DB::table('categories')->insert([
-            'title' => Str::random(10),
-        ]);
+        
     }
 }
