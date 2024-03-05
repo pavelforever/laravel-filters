@@ -26,6 +26,9 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'provider',
+        'provider_id',
+        'provider_token'
     ];
 
     protected $hidden = [
@@ -43,4 +46,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function socials()
+    {
+        return $this->hasMany(UserSocial::class);
+    }
 }

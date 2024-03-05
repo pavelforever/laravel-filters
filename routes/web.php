@@ -6,7 +6,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\TagController;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Auth\SocialController;
 
 
 Route::group(['prefix' => 'admin','as' => 'admin.','middleware' => ['auth','admin']], function(){
@@ -28,6 +28,10 @@ Route::group(['prefix' => 'admin','as' => 'admin.','middleware' => ['auth','admi
     Route::post('/posts/{id}/restore', [PostController::class,'restore'])->name('posts.restore.restore');
     Route::resource('/posts', PostController::class);
 });
+
+Route::get('/auth/{provider}/redirect',[SocialController::class,'redirect']);
+Route::get('/auth/{provider}/callback',[SocialController::class,'callback']);
+
 Auth::routes();
 
 
