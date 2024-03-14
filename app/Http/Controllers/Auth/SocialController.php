@@ -27,6 +27,8 @@ class SocialController extends Controller
             $user->socials()->updateOrCreate([
                 'provider_id' => $socialUser->id,
                 'provider' => $provider,
+                
+            ],[
                 'provider_token' => $socialUser->token,
             ]);
     

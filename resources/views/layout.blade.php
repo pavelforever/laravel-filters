@@ -24,16 +24,18 @@
                     Demo Blog
                 </a>
                 <div class="collapse navbar-collapse" id="navbarDropdown">
+                    
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     @auth
                         
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         @if(auth()->user()->role == App\Models\User::isAdmin)
                         <li class="nav-item active">
                             <a class="nav-link" aria-current="page" href="{{route('admin.dashboard')}}">Admin</a>
                         </li>
                         @endif
+                        @endauth
+                        <x-cartsvg></x-cartsvg>
                     </ul>
-                    @endauth
                     <ul class="navbar-nav ms-auto">
                         @guest
                             @if(Route::has('login'))
@@ -68,6 +70,9 @@
                                 {{ Auth::user()->name}}
                             </a>
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{{ route('users.products',auth()->user()) }}">
+                                    {{ __('Your Products') }}
+                                </a>
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                 onclick="event.preventDefault();
                                                 document.getElementById('logout-form').submit();">

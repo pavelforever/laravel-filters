@@ -300,6 +300,23 @@ return [
             'topnav_right' => true,
         ],
 
+        [
+            'text' => 'Products',
+            'icon' => '',
+            'url' => 'admin/products',
+            'submenu' => [
+                [
+                    'text' => 'All Products',
+                    'icon' => 'fa fa-list mr-2',
+                    'url' => 'admin/products',
+                ],
+                [
+                    'text' => 'Create Product',
+                    'url' => 'admin/products/create',
+                    'icon' => 'fa text-primary fa-plus mr-2'
+                ],
+            ]
+        ],
         
         [
             'text' => 'Category',

@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Auth\SocialController;
-
+use App\Http\Controllers\ProductController;
 
 Route::group(['prefix' => 'admin','as' => 'admin.','middleware' => ['auth','admin']], function(){
     Route::get('/',[DashboardController::class, 'index'])->name('dashboard');
@@ -27,6 +27,15 @@ Route::group(['prefix' => 'admin','as' => 'admin.','middleware' => ['auth','admi
     Route::get('/posts/restore', [PostController::class,'deletes'])->name('posts.restore');
     Route::post('/posts/{id}/restore', [PostController::class,'restore'])->name('posts.restore.restore');
     Route::resource('/posts', PostController::class);
+    
+    Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+    Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+    Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+    Route::get('/products', [ProductController::class, 'admin_index'])->name('products.index');
+    Route::get('/product/{product}', [ProductController::class, 'admin_show'])->name('products.show');
+    Route::patch('/products/{product}', [ProductController::class, 'update'])->name('products.update');
+    Route::delete('/products/{product}', [ProductController::class , 'destroy'])->name('products.destroy');
+
 });
 
 Route::get('/auth/{provider}/redirect',[SocialController::class,'redirect']);

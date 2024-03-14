@@ -8,12 +8,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Cashier\Billable;
+use function Illuminate\Events\queueable;
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     use SoftDeletes;
-
+    use Billable;
     const isAdmin = 0;
     const isSimpleUser = 1;
 
@@ -50,5 +52,17 @@ class User extends Authenticatable
     public function socials()
     {
         return $this->hasMany(UserSocial::class);
+    }
+
+    public function orders(){
+        return $this->hasMany(Order::class);
+    }
+
+    public function purchases(){
+        return $this->belongsToMany(Product::class,'purchased','user_id','product_id')->withPivot(['quantity'])->withTimestamps();
+    }
+
+    public function hasSocialLogin(){
+        return $this->socials()->exists();
     }
 }

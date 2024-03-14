@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
             'password' => '12345678',
             'role' => 0,
         ];
+        User::query()->create($admin);
         User::factory()
         ->count(20)
         ->create();

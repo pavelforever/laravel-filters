@@ -41,4 +41,9 @@ return [
         'client_secret' => env('GITHUB_CLIENT_SECRET'),
         'redirect' => '/auth/github/callback',
     ],    
+    'fondy' => [
+        'merchant_id' => env('FONDY_MERCHANT_ID'),
+        'merchant_password' => env('FONDY_MERCHANT_PASSWORD'),
+        'currency' => env('FONDY_MERCHANT_CURRENCY'),
+    ],
 ];

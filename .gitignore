@@ -17,3 +17,6 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+/app/Services/StripePayment.php
+/app/Services/PaypalPayment.php
+/storage/*

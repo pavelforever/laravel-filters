@@ -16,22 +16,9 @@ class Category extends Model
     {
         return $this->hasMany(Post::class);
     }
-    public function countPosts()
+    public function products()
     {
-        return $this->posts()->count();
+        return $this->belongsToMany(Product::class);
     }
-    // protected static function boot()
-    // {
-    //     parent::boot();
 
-    //     static::deleting(function ($category) {
-    //         // Detach posts when category is deleted
-    //         $category->posts()->update(['category_id' => null]);
-    //     });
-
-    //     static::restoring(function ($category) {
-    //         // Restore posts when category is restored
-    //         $category->posts()->withTrashed()->update(['category_id' => $category->id]);
-    //     });
-    // }
 }
