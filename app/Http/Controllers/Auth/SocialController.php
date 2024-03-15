@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Events\UserUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 
 class SocialController extends Controller
@@ -30,12 +30,12 @@ class SocialController extends Controller
                 
             ],[
                 'provider_token' => $socialUser->token,
-            ]);
-    
-            Auth::login($user);
+            ]);            
+            
             return redirect()->route('main');
 
         }catch(\Exception $ex){
+            dd($ex);
             return redirect()->route('login')->withErrors("Sign in by $provider failed.Please Try again");
         }
     }
