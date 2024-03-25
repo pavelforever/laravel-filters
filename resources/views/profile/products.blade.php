@@ -58,7 +58,7 @@
             setTimeout(() => {
                 $(this).hide()
                 $('#dwn_link_'+{{$product->id}}).show();
-            }, 2000);
+            }, 3000);
             $.ajax({
                 type: 'GET',
                 url: '{{ route("product.generate", ["user" => $user->id, "product" => $product->id]) }}',

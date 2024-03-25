@@ -90,12 +90,12 @@ class ProductService {
         }
     }
 
-    public function downloadProduct(Product $product) : StreamedResponse {
+    public function downloadProduct(Product $product,String $token) : StreamedResponse {
         try{
             if (Gate::denies('download-product',$product)) {
                 return abort(403, 'Unauthorized action');
             }
-            if(Cache::get('download_tkn_'.$product->id) === null){
+            if(!Cache::has('download_tkn_'.$product->id) || !$token || $token !== Cache::get('download_tkn_'.$product->id)){
                 return abort(403, 'Link has expired');
             }
     

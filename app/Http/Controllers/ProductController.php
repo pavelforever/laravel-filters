@@ -100,9 +100,8 @@ class ProductController extends Controller
     }
 
     
-    public function download(Product $product,ProductService $service)  {
+    public function download(Product $product,String $token , ProductService $service)  {
         
-        return $service->downloadProduct($product);
-    
+        return $service->downloadProduct($product,$token);
     }
 }

@@ -55,36 +55,42 @@ class FondyPayment implements PaymentGateway {
     }
 
     public function callback($request) {   
-
-        $status = $request->input('order_status');
-        $amount = intval($request->input('amount'));
-        $payment_id = $request->input('payment_id');
-        self::check($request->all());
-        $order = Order::where('transaction_id', $payment_id)->first();
-        if(!$order){
-            return response()->json(['status' => 'error', 'message' => 'Invalid order ID'], 400);
-        }
-        if(intval($amount) != $order->total*100){
-            return response()->json(['status' => 'error', 'message' => 'Invalid amount'], 400);
-        }
-        if($status == 'approved'){
-            $user = (new User())->find($order->user_id);
-            auth()->login($user);  // Workaround with session expired when redirecting from third-party page
-            $order->update(['status' => 'paid']);
-            foreach($order->products as $product){
-                $quantity = $product->pivot->quantity;
-                $existingPurchase = $user->purchases()->where('product_id', $product->id)->first();
-                if ($existingPurchase) {
-                    $existingPurchase->update(['quantity' => $quantity + 1]);
-                } else {
-                    $user->purchases()->attach($product, ['quantity' => $quantity]);
-                }
+        DB::beginTransaction();
+        try{
+            $status = $request->input('order_status');
+            $amount = intval($request->input('amount'));
+            $payment_id = $request->input('payment_id');
+            self::check($request->all());
+            $order = Order::where('transaction_id', $payment_id)->first();
+            if(!$order){
+                return response()->json(['status' => 'error', 'message' => 'Invalid order ID'], 400);
             }
-            DB::commit();
-            return response()->json(['status' => 'successful']);
-        }else {
-            $order->update(['status' => 'failed']);
-            return response()->json(['status' => 'failed', 'message-' => 'Payment processing is failed', 400]);
+            if(intval($amount) != $order->total*100){
+                return response()->json(['status' => 'error', 'message' => 'Invalid amount'], 400);
+            }
+            if($status == 'approved'){
+                $user = (new User())->find($order->user_id);
+                auth()->login($user);  // Workaround with session expired when redirecting from third-party page
+                $order->update(['status' => 'paid']);
+                foreach($order->products as $product){
+                    $quantity = $product->pivot->quantity;
+                    $existingPurchase = $user->purchases()->where('product_id', $product->id)->first();
+                    if ($existingPurchase) {
+                        $existingPurchase->update(['quantity' => $quantity + 1]);
+                    } else {
+                        $user->purchases()->attach($product, ['quantity' => $quantity]);
+                    }
+                }
+                DB::commit();
+                return response()->json(['status' => 'successful']);
+            }else {
+                $order->update(['status' => 'failed']);
+                DB::commit();
+                return response()->json(['status' => 'failed', 'message-' => 'Payment processing is failed', 400]);
+            }
+        }catch(\Exception $ex){
+            DB::rollBack();
+            return response()->json(['status' => 'error', 'message-' => 'Transaction failed', 400]);
         }
        
     }

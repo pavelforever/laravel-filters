@@ -42,20 +42,15 @@ class PaymentController extends Controller
     
     public function callback(Request $request, FondyPayment $fondy){
         try{
-            DB::beginTransaction();
-
             $payment = new Payment($fondy);
             $response = $payment->callback($request);
             $responseData = json_decode($response->getContent(), true);
             if($responseData['status'] ===  'successful'){
-                DB::commit();
                 return redirect()->route('main');
             }else {
-                DB::rollBack();
                 return redirect()->route('main')->with('error', $responseData['message']);
             }
         }catch(\Exception $e){
-            DB::rollBack();
             return response()->json(['status' => 'error', 'message' => 'Transaction failed: '.$e], 500);
         }
        
