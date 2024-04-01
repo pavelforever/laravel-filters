@@ -20,16 +20,4 @@ class Post extends Model
         ->withPivot('id')
         ->withTimestamps();
     }
-
-    public function customWithTrashed(){
-        return $this->belongsToMany(Tag::class,'post_tags','post_id','tag_id')->using(PostTag::class)
-        ->withPivot('id')
-        ->withTimestamps();
-    }
-    public function customOnlyTrashed(){
-        return $this->belongsToMany(Tag::class,'post_tags','post_id','tag_id')->using(PostTag::class)
-        ->whereNotNull(['deleted_at'])
-        ->withPivot('id')
-        ->withTimestamps();
-    }
 }

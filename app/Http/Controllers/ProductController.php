@@ -10,7 +10,8 @@ use App\Services\ProductService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
-
+use Illuminate\Http\Request;
+use App\App;
 
 class ProductController extends Controller
 {
@@ -19,11 +20,20 @@ class ProductController extends Controller
         $products = $user->purchases;
         return view('profile.products',compact(['products','user']));
     }
-    public function index()
+
+    public function index(Request $request)
     {
-        $products =  Product::paginate(10);
-        
-        return view('main',compact(['products']));
+        $filters = app(App::class)->filters();
+        $products =  Product::query()->with('categories')->filtered($filters)->paginate(10);
+    
+        if ($request->query('filters')) {
+            $currQuery = ['filters' => $request->query('filters')];
+            $query = ['filters' => array_filter($request->query('filters'))];
+            if($currQuery != $query){
+                return redirect()->route('main',$query);
+            }
+        }
+        return view('main', compact('products', 'filters'));
     }
 
     public function admin_index()

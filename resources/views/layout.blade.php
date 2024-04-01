@@ -14,7 +14,8 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @vite(['resources/sass/app.scss', 'resources/css/app.css','resources/js/app.js'])
+    
 </head>
 <body>
     <header class="mb-5">
@@ -92,11 +93,20 @@
 
         @yield('header');
     </header>
-    <main>
-        @yield('content')
-    </main>
+
+    <div class="d-flex">
+        <aside style="width: 30%">
+            @include('components.filters', ['filters' => $filters])
+        </aside>
+        <main style="flex-grow: 1">
+            @yield('content')
+        </main>
+    </div>
+
     <footer>
         @yield('footer')
     </footer>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
 </html>
